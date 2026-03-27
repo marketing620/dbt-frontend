@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+:root {
+  --primary: #0d6efd; /* Deep Blue */
+  --secondary: #20c997; /* Teal */
+  --accent: #6ec1e4; /* Sky Blue */
+  --background: #f8f9fa; /* Light Gray */
+  --text-dark: #212529; /* Dark Gray */
+
+  --foreground: var(--text-dark);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-roboto-slab), "Roboto Slab", serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.navbar-brand {
+  color: var(--text-dark) !important;
+}
+
+.text-primary-custom {
+  color: var(--primary) !important;
+}
+.bg-primary-custom {
+  background-color: var(--primary) !important;
+  color: white !important;
+}
+.btn-primary-custom {
+  background-color: var(--primary) !important;
+  border-color: var(--primary) !important;
+  color: white !important;
+  transition: all 0.3s ease;
+}
+.btn-primary-custom:hover {
+  background-color: var(--secondary) !important;
+  border-color: var(--secondary) !important;
+  color: white !important;
+  transform: translateY(-2px);
+}
+
+.text-secondary-custom {
+  color: var(--secondary) !important;
+}
+.bg-secondary-custom {
+  background-color: var(--secondary) !important;
+  color: white !important;
+}
+.btn-secondary-custom {
+  background-color: var(--secondary) !important;
+  border-color: var(--secondary) !important;
+  color: white !important;
+  transition: all 0.3s ease;
+}
+.btn-secondary-custom:hover {
+  background-color: var(--primary) !important;
+  border-color: var(--primary) !important;
+  color: white !important;
+  transform: translateY(-2px);
+}
+
+.text-accent-custom {
+  color: var(--accent) !important;
+}
+
+/* Subtle Shadows & Cards */
+.card-custom {
+  border: none;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  background-color: #ffffff;
+}
+.card-custom:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.icon-bg {
+  background-color: rgba(
+    110,
+    193,
+    228,
+    0.15
+  ) !important; /* Sky blue transparent */
+  color: var(--primary) !important;
+}
+.icon-bg-solid {
+  background-color: var(--primary) !important;
+  color: white !important;
+}
+
+/* Header link highlight color */
+a.nav-link.active {
+  color: var(--primary) !important;
+}
+
+/* Footer Hover Effects */
+.social-icon {
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease !important;
+}
+
+.social-icon:hover {
+  transform: translateY(-3px) !important;
+  background-color: var(--secondary) !important;
+}
+
+a.hover-focus-teal {
+  transition: color 0.2s ease !important;
+}
+
+a.hover-focus-teal:hover {
+  color: var(--secondary) !important;
+}

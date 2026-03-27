@@ -1,0 +1,6 @@
+import { redirect } from "next/navigation";
+
+export default function RootPage() {
+  // This will permanently redirect users from the root URL "/" to "/home"
+  redirect("/home");
+}
