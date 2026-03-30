@@ -17,6 +17,21 @@ export default function Header() {
 
   return (
     <header className="sticky-top bg-white border-bottom shadow-sm">
+      <style>{`
+        @media (max-width: 991.98px) {
+          #navbarContent {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: white;
+            padding: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            z-index: 1050;
+            border-top: 1px solid #eee;
+          }
+        }
+      `}</style>
       <nav className="navbar navbar-expand-lg navbar-light py-3">
         <div className="container">
           {/* Logo */}
