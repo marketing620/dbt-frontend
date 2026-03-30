@@ -14,6 +14,7 @@ import {
   Check,
   ShieldAlert
 } from "lucide-react";
+import MaintenanceToggle from "@/components/admin/MaintenanceToggle";
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("general");
@@ -75,6 +76,14 @@ export default function SettingsPage() {
                     <input type="text" className="form-control border-light-subtle rounded-3 py-2 bg-light font-medium" defaultValue="90001" placeholder="Zip Code" />
                   </div>
                 </div>
+              </div>
+
+              <hr className="border-light-subtle my-5" />
+              
+              <div className="mb-5">
+                <h5 className="fw-bold text-dark mb-1">Public Website Status</h5>
+                <p className="text-muted small mb-0">Activate or deactivate your public maintenance mode screen globally.</p>
+                <MaintenanceToggle />
               </div>
 
               <hr className="border-light-subtle my-5" />

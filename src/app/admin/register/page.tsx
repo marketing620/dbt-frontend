@@ -3,27 +3,44 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { UserPlus, Mail, Eye, EyeOff, User, Lock, ArrowRight } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function AdminRegister() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", password: "", confirmPassword: "" });
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+      toast.error("Passwords do not match!");
       return;
     }
 
     setIsLoading(true);
 
-    // TODO: Hook up your Firebase Auth here
-    setTimeout(() => {
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const res = await fetch(`${API_URL}/api/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          name: formData.name, 
+          email: formData.email, 
+          password: formData.password 
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "An error occurred");
+
+      toast.success("Registration successful! You can now log in.");
+      window.location.href = "/admin/login";
+    } catch (error: any) {
+      toast.error(error.message || "Registration failed. An error occurred");
       setIsLoading(false);
-      window.location.href = "/admin/login"; // Redirect to login panel after fake register
-    }, 1500);
+    }
   };
 
   return (

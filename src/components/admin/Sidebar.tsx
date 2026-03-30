@@ -10,6 +10,15 @@ export default function Sidebar() {
   const [hoveredLabel, setHoveredLabel] = useState<string | null>(null);
   const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 });
 
+  const handleSignOut = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem("adminToken");
+      document.cookie = "adminToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      window.location.href = "/admin/login";
+    }
+  };
+
   const handleMouseEnter = (
     e: React.MouseEvent<HTMLElement>,
     label: string,
@@ -298,9 +307,9 @@ export default function Sidebar() {
                   <hr className="dropdown-divider" />
                 </li>
                 <li>
-                  <Link className="dropdown-item" href="/">
+                  <button className="dropdown-item text-danger text-start fw-bold" onClick={handleSignOut} style={{ background: 'none', border: 'none', padding: '0.25rem 1rem', width: '100%' }}>
                     Sign out
-                  </Link>
+                  </button>
                 </li>
               </ul>
             </div>

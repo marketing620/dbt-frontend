@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./globals.css";
 import AosInitializer from "@/components/AosInitializer";
 import BootstrapCleanup from "@/components/BootstrapCleanup";
+import { Toaster } from "react-hot-toast";
 
 const robotoSlab = Roboto_Slab({
   variable: "--font-roboto-slab",
@@ -33,6 +34,7 @@ export default function RootLayout({
       <body className={`${robotoSlab.variable} d-flex flex-column min-vh-100`}>
         <AosInitializer />
         <BootstrapCleanup />
+        <Toaster position="top-right" />
         {children}
       </body>
     </html>

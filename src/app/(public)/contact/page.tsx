@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -13,7 +14,6 @@ export default function Contact() {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -40,7 +40,7 @@ export default function Contact() {
       });
 
       if (response.ok) {
-        setIsSuccess(true);
+        toast.success("Message Sent Successfully! One of our specialists will contact you shortly.");
         // Reset form
         setFormData({
           name: "",
@@ -49,13 +49,12 @@ export default function Contact() {
           subject: "",
           message: "",
         });
-        setTimeout(() => setIsSuccess(false), 5000);
       } else {
-        alert("Failed to send message. Please try again.");
+        toast.error("Failed to send message. Please try again.");
       }
     } catch (error) {
       console.error("Error submitting contact form:", error);
-      alert("An error occurred. Please try again later.");
+      toast.error("An error occurred. Please try again later.");
     } finally {
       setIsSubmitting(false);
     }
@@ -286,21 +285,6 @@ export default function Contact() {
                 about our credentialing process, or want to explore outsourcing
                 options, fill out the form below.
               </p>
-
-              {isSuccess && (
-                <div
-                  className="alert alert-success d-flex align-items-center rounded-3 mb-4 p-4 border-0"
-                  style={{ backgroundColor: "#dcfce7", color: "#166534" }}
-                  role="alert"
-                >
-                  <i className="fa-solid fa-circle-check fs-4 me-3"></i>
-                  <div>
-                    <strong>Message Sent Successfully!</strong>
-                    <br />
-                    One of our billing specialists will contact you shortly.
-                  </div>
-                </div>
-              )}
 
               <form onSubmit={handleSubmit} className="row g-4 p-0">
                 <div className="col-md-6">

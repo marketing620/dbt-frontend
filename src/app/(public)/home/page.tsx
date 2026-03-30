@@ -68,7 +68,9 @@ export default function Home() {
 
               <div className="d-flex flex-column flex-sm-row justify-content-center justify-content-lg-start gap-3">
                 <Link
-                  href="/contact"
+                  href="https://meet.google.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="btn btn-lg px-5 py-3 rounded-pill fw-bold shadow-lg"
                   style={{
                     backgroundColor: "#2563eb",
@@ -77,7 +79,7 @@ export default function Home() {
                     border: "none",
                   }}
                 >
-                  Get a Free Consultation
+                  Get a Free Audit
                 </Link>
                 <Link
                   href="/services"
