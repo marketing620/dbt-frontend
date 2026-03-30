@@ -106,13 +106,13 @@ export default function AdminLogin() {
                 >
                   PASSWORD
                 </label>
-                <a
+                {/* <a
                   href="#"
                   className="small text-decoration-none fw-semibold"
                   style={{ color: "#2563eb" }}
                 >
                   Forgot password?
-                </a>
+                </a> */}
               </div>
               <div className="position-relative">
                 <div className="position-absolute top-50 translate-middle-y ps-3 text-muted">
@@ -163,7 +163,7 @@ export default function AdminLogin() {
             </button>
           </form>
 
-          <p className="text-center mt-5 text-muted small">
+          {/* <p className="text-center mt-5 text-muted small">
             Don't have an admin account?{" "}
             <Link
               href="/admin/register"
@@ -172,7 +172,7 @@ export default function AdminLogin() {
             >
               Register here
             </Link>
-          </p>
+          </p> */}
         </div>
       </div>
 
@@ -210,7 +210,7 @@ export default function AdminLogin() {
           style={{ maxWidth: "600px" }}
         >
           <h1
-            className="display-4 fw-bold mb-4"
+            className="display-4 fw-bold mb-4 text-white"
             style={{ letterSpacing: "-1px" }}
           >
             Secure Dental Billing Access
