@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/popover";
 
 import {
-  CartesianGrid,
   Line,
   LineChart,
   ResponsiveContainer,
@@ -23,34 +22,37 @@ import {
   YAxis,
 } from "recharts";
 
-const data = [
-  {
-    value: 100,
-    date: "2022-01-01",
-  },
-  {
-    value: 50,
-    date: "2022-01-02",
-  },
-  {
-    value: 300,
-    date: "2022-01-03",
-  },
-  {
-    value: 100,
-    date: "2022-01-04",
-  },
-  {
-    value: 500,
-    date: "2022-01-05",
-  },
-];
+interface DailyData {
+  date: string;
+  value: number;
+}
 
 export default function Chart() {
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: subDays(new Date(), 30),
     to: new Date(),
   });
+  
+  const [chartData, setChartData] = React.useState<DailyData[]>([]);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        const response = await fetch(`${API_URL}/api/analytics/dashboard`);
+        if (response.ok) {
+          const resData = await response.json();
+          setChartData(resData.visitorsOverTime || []);
+        }
+      } catch (error) {
+        console.error("Failed to fetch visitors data", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAnalytics();
+  }, []);
 
   return (
     <div className="container mb-4">
@@ -103,21 +105,29 @@ export default function Chart() {
           width="100%"
           height={300}
         >
-          <LineChart data={data}>
-            <XAxis dataKey="date" tick={{ fill: "#6c757d", fontSize: 12 }} tickLine={false} axisLine={false} dy={10} />
-            <YAxis tick={{ fill: "#6c757d", fontSize: 12 }} tickLine={false} axisLine={false} dx={-10} />
-            <Tooltip
-              contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px rgba(0,0,0,0.1)" }}
-            />
-            <Line
-              type="monotone"
-              dataKey="value"
-              strokeWidth={3}
-              dot={{ r: 4, strokeWidth: 2 }}
-              activeDot={{ r: 6 }}
-              stroke="#2563eb"
-            />
-          </LineChart>
+          {loading ? (
+            <div className="d-flex justify-content-center align-items-center h-100">
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          ) : (
+            <LineChart data={chartData.length > 0 ? chartData : [{ date: new Date().toISOString().split('T')[0], value: 0 }]}>
+              <XAxis dataKey="date" tick={{ fill: "#6c757d", fontSize: 12 }} tickLine={false} axisLine={false} dy={10} />
+              <YAxis tick={{ fill: "#6c757d", fontSize: 12 }} tickLine={false} axisLine={false} dx={-10} allowDecimals={false} />
+              <Tooltip
+                contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px rgba(0,0,0,0.1)" }}
+              />
+              <Line
+                type="monotone"
+                dataKey="value"
+                strokeWidth={3}
+                dot={{ r: 4, strokeWidth: 2 }}
+                activeDot={{ r: 6 }}
+                stroke="#2563eb"
+              />
+            </LineChart>
+          )}
         </ResponsiveContainer>
       </div>
     </div>

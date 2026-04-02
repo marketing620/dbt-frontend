@@ -1,13 +1,12 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
   Bar,
   BarChart,
   CartesianGrid,
   Cell,
   Legend,
-  Line,
-  LineChart,
   Pie,
   PieChart,
   ResponsiveContainer,
@@ -16,16 +15,49 @@ import {
   YAxis,
 } from "recharts";
 
-const data = [
-  { name: "Google Ads", value: 400, color: "#8884d8" },
-  { name: "Facebook Ads", value: 300, color: "#83a6ed" },
-  { name: "Instagram Ads", value: 200, color: "#8dd1e1" },
-  { name: "TikTok Ads", value: 250, color: "#a4de6c" },
-  { name: "Organic Search", value: 50, color: "#d0ed57" },
-  { name: "Referral", value: 150, color: "#ffc658" },
-];
+interface SourceData {
+  name: string;
+  value: number;
+  color: string;
+}
 
 export default function TrafficSourceChart() {
+  const [data, setData] = useState<SourceData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        const response = await fetch(`${API_URL}/api/analytics/dashboard`);
+        if (response.ok) {
+          const resData = await response.json();
+          setData(resData.sourcesData || []);
+        }
+      } catch (error) {
+        console.error("Failed to fetch analytics", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAnalytics();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="container mb-4 text-center py-5">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Fallback data if empty
+  const displayData = data.length > 0 ? data : [
+    { name: "Direct", value: 1, color: "#8884d8" }
+  ];
+
   return (
     <div className="container mb-4">
       <div className="row g-4">
@@ -37,7 +69,7 @@ export default function TrafficSourceChart() {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={data}
+                    data={displayData}
                     dataKey="value"
                     nameKey="name"
                     cx="50%"
@@ -45,7 +77,7 @@ export default function TrafficSourceChart() {
                     outerRadius={100}
                     label={{ fontSize: 12, fill: "#6c757d" }}
                   >
-                    {data.map((entry, index) => (
+                    {displayData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
@@ -70,7 +102,7 @@ export default function TrafficSourceChart() {
             <div style={{ width: "100%", height: 300 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
-                  data={data}
+                  data={displayData}
                   layout="vertical"
                   margin={{ top: 5, right: 20, left: 30, bottom: 5 }}
                 >
@@ -96,7 +128,7 @@ export default function TrafficSourceChart() {
                     }}
                   />
                   <Bar dataKey="value" radius={[0, 4, 4, 0]}>
-                    {data.map((entry, index) => (
+                    {displayData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Bar>

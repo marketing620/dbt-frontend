@@ -1,6 +1,34 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import TrafficSourceChart from "@/components/admin/TrafficSourceChart";
 import Chart from "@/components/admin/VisitorsChart";
+
 export default function DashboardPage() {
+  const [visitorsToday, setVisitorsToday] = useState(0);
+  const [totalVisitors, setTotalVisitors] = useState(0);
+  const [totalLeads, setTotalLeads] = useState(0);
+  const [conversionRate, setConversionRate] = useState("0");
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        const response = await fetch(`${API_URL}/api/analytics/dashboard`);
+        if (response.ok) {
+          const resData = await response.json();
+          setVisitorsToday(resData.visitorsToday || 0);
+          setTotalVisitors(resData.totalVisitors || 0);
+          setTotalLeads(resData.totalLeads || 0);
+          setConversionRate(resData.conversionRate || "0");
+        }
+      } catch (error) {
+        console.error("Failed to fetch analytics summary", error);
+      }
+    };
+    fetchAnalytics();
+  }, []);
+
   return (
     <>
       <div className="container mt-4 mb-4">
@@ -22,9 +50,9 @@ export default function DashboardPage() {
                   <i className="fa-solid fa-users" style={{ fontSize: "14px" }}></i>
                 </div>
               </div>
-              <p className="fs-3 fw-bold text-dark mb-0">320</p>
+              <p className="fs-3 fw-bold text-dark mb-0">{visitorsToday}</p>
               <div className="mt-2 text-success" style={{ fontSize: "12px", fontWeight: "600" }}>
-                <i className="fa-solid fa-arrow-up me-1"></i> +12.5% <span className="text-muted fw-normal ms-1">from yesterday</span>
+                <i className="fa-solid fa-arrow-up me-1"></i> <span className="text-muted fw-normal ms-1">Active Tracker</span>
               </div>
             </div>
           </div>
@@ -36,9 +64,9 @@ export default function DashboardPage() {
                   <i className="fa-solid fa-globe" style={{ fontSize: "14px" }}></i>
                 </div>
               </div>
-              <p className="fs-3 fw-bold text-dark mb-0">1,204</p>
+              <p className="fs-3 fw-bold text-dark mb-0">{totalVisitors}</p>
               <div className="mt-2 text-success" style={{ fontSize: "12px", fontWeight: "600" }}>
-                <i className="fa-solid fa-arrow-up me-1"></i> +5.2% <span className="text-muted fw-normal ms-1">from last month</span>
+                <i className="fa-solid fa-arrow-up me-1"></i> <span className="text-muted fw-normal ms-1">Active Tracker</span>
               </div>
             </div>
           </div>
@@ -50,9 +78,9 @@ export default function DashboardPage() {
                   <i className="fa-solid fa-user-plus" style={{ fontSize: "14px" }}></i>
                 </div>
               </div>
-              <p className="fs-3 fw-bold text-dark mb-0">410</p>
+              <p className="fs-3 fw-bold text-dark mb-0">{totalLeads}</p>
               <div className="mt-2 text-success" style={{ fontSize: "12px", fontWeight: "600" }}>
-                <i className="fa-solid fa-arrow-up me-1"></i> +15.3% <span className="text-muted fw-normal ms-1">from last month</span>
+                <i className="fa-solid fa-arrow-up me-1"></i> <span className="text-muted fw-normal ms-1">Auto Synchronized</span>
               </div>
             </div>
           </div>
@@ -64,9 +92,9 @@ export default function DashboardPage() {
                   <i className="fa-solid fa-bolt" style={{ fontSize: "14px" }}></i>
                 </div>
               </div>
-              <p className="fs-3 fw-bold text-dark mb-0">3.2%</p>
-              <div className="mt-2 text-danger" style={{ fontSize: "12px", fontWeight: "600" }}>
-                <i className="fa-solid fa-arrow-down me-1"></i> -0.4% <span className="text-muted fw-normal ms-1">from last week</span>
+              <p className="fs-3 fw-bold text-dark mb-0">{conversionRate}%</p>
+              <div className="mt-2 text-primary" style={{ fontSize: "12px", fontWeight: "600" }}>
+                <i className="fa-solid fa-chart-line me-1"></i> <span className="text-muted fw-normal ms-1">Calculated</span>
               </div>
             </div>
           </div>

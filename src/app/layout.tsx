@@ -5,6 +5,8 @@ import "./globals.css";
 import AosInitializer from "@/components/AosInitializer";
 import BootstrapCleanup from "@/components/BootstrapCleanup";
 import { Toaster } from "react-hot-toast";
+import UtmTracker from "@/components/UtmTracker";
+import { Suspense } from "react";
 
 const robotoSlab = Roboto_Slab({
   variable: "--font-roboto-slab",
@@ -35,6 +37,9 @@ export default function RootLayout({
         <AosInitializer />
         <BootstrapCleanup />
         <Toaster position="top-right" />
+        <Suspense fallback={null}>
+          <UtmTracker />
+        </Suspense>
         {children}
       </body>
     </html>
