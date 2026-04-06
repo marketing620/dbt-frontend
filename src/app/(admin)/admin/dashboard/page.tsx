@@ -9,6 +9,8 @@ export default function DashboardPage() {
   const [totalVisitors, setTotalVisitors] = useState(0);
   const [totalLeads, setTotalLeads] = useState(0);
   const [conversionRate, setConversionRate] = useState("0");
+  const [recentLeads, setRecentLeads] = useState<any[]>([]);
+  const [loadingLeads, setLoadingLeads] = useState(true);
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -21,9 +23,14 @@ export default function DashboardPage() {
           setTotalVisitors(resData.totalVisitors || 0);
           setTotalLeads(resData.totalLeads || 0);
           setConversionRate(resData.conversionRate || "0");
+          if (resData.recentLeads) {
+            setRecentLeads(resData.recentLeads);
+          }
         }
       } catch (error) {
         console.error("Failed to fetch analytics summary", error);
+      } finally {
+        setLoadingLeads(false);
       }
     };
     fetchAnalytics();
@@ -124,63 +131,54 @@ export default function DashboardPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr style={{ borderBottom: "1px solid #f8f9fa" }}>
-                        <td className="py-3 ps-0">
-                          <div className="d-flex align-items-center">
-                            <div className="rounded-circle d-flex justify-content-center align-items-center me-3" style={{ width: "40px", height: "40px", backgroundColor: "#eef2ff", color: "#4f46e5", fontWeight: "bold", fontSize: "14px" }}>
-                              JD
-                            </div>
-                            <div>
-                              <div className="fw-bold text-dark" style={{ fontSize: "14px" }}>John Doe</div>
-                              <div className="text-muted" style={{ fontSize: "12px" }}>john@example.com</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="py-3 text-secondary" style={{ fontSize: "14px" }}>
-                          Dental<br/>Implants
-                        </td>
-                        <td className="py-3 pe-0 text-end">
-                          <span className="badge rounded-pill" style={{ backgroundColor: "#dcfce7", color: "#166534", fontSize: "10px", padding: "6px 12px" }}>NEW</span>
-                        </td>
-                      </tr>
-                      <tr style={{ borderBottom: "1px solid #f8f9fa" }}>
-                        <td className="py-3 ps-0">
-                          <div className="d-flex align-items-center">
-                            <div className="rounded-circle d-flex justify-content-center align-items-center me-3" style={{ width: "40px", height: "40px", backgroundColor: "#fae8ff", color: "#a21caf", fontWeight: "bold", fontSize: "14px" }}>
-                              MS
-                            </div>
-                            <div>
-                              <div className="fw-bold text-dark" style={{ fontSize: "14px" }}>Mila Smith</div>
-                              <div className="text-muted" style={{ fontSize: "12px" }}>mila.s@domain.com</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="py-3 text-secondary" style={{ fontSize: "14px" }}>
-                          Teeth<br/>Whitening
-                        </td>
-                        <td className="py-3 pe-0 text-end">
-                          <span className="badge rounded-pill" style={{ backgroundColor: "#dbeafe", color: "#1e40af", fontSize: "10px", padding: "6px 12px" }}>CONTACTED</span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="py-3 ps-0">
-                          <div className="d-flex align-items-center">
-                            <div className="rounded-circle d-flex justify-content-center align-items-center me-3" style={{ width: "40px", height: "40px", backgroundColor: "#ffedd5", color: "#c2410c", fontWeight: "bold", fontSize: "14px" }}>
-                              RB
-                            </div>
-                            <div>
-                              <div className="fw-bold text-dark" style={{ fontSize: "14px" }}>Robert Brown</div>
-                              <div className="text-muted" style={{ fontSize: "12px" }}>robert.b@web.com</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="py-3 text-secondary" style={{ fontSize: "14px" }}>
-                          Root<br/>Canal
-                        </td>
-                        <td className="py-3 pe-0 text-end">
-                          <span className="badge rounded-pill" style={{ backgroundColor: "#fef3c7", color: "#b45309", fontSize: "10px", padding: "6px 12px" }}>QUALIFIED</span>
-                        </td>
-                      </tr>
+                      {loadingLeads ? (
+                        <tr>
+                          <td colSpan={3} className="text-center py-4 text-muted small">Loading...</td>
+                        </tr>
+                      ) : recentLeads.length > 0 ? (
+                        recentLeads.map((lead: any) => {
+                          const getInitials = (name: string) => name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase();
+                          const colors = [
+                            { bg: "#eef2ff", text: "#4f46e5" },
+                            { bg: "#fae8ff", text: "#a21caf" },
+                            { bg: "#ffedd5", text: "#c2410c" },
+                            { bg: "#ecfccb", text: "#4d7c0f" },
+                            { bg: "#fce7f3", text: "#be185d" }
+                          ];
+                          const color = colors[lead.name.length % colors.length];
+
+                          return (
+                            <tr key={lead.id} style={{ borderBottom: "1px solid #f8f9fa" }}>
+                              <td className="py-3 ps-0">
+                                <div className="d-flex align-items-center">
+                                  <div className="rounded-circle d-flex justify-content-center align-items-center me-3" style={{ width: "40px", height: "40px", backgroundColor: color.bg, color: color.text, fontWeight: "bold", fontSize: "14px" }}>
+                                    {getInitials(lead.name)}
+                                  </div>
+                                  <div>
+                                    <div className="fw-bold text-dark" style={{ fontSize: "14px" }}>{lead.name}</div>
+                                    <div className="text-muted" style={{ fontSize: "12px" }}>{lead.email}</div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="py-3 text-secondary" style={{ fontSize: "14px" }}>
+                                {lead.service.length > 15 ? lead.service.substring(0, 15) + '...' : lead.service}
+                              </td>
+                              <td className="py-3 pe-0 text-end">
+                                <span className="badge rounded-pill" style={{ 
+                                  backgroundColor: lead.status === "NEW" ? "#dcfce7" : lead.status === "CLOSED" ? "#f3e8ff" : "#dbeafe", 
+                                  color: lead.status === "NEW" ? "#166534" : lead.status === "CLOSED" ? "#7e22ce" : "#1e40af", 
+                                  fontSize: "10px", padding: "6px 12px" }}>
+                                  {lead.status.toUpperCase()}
+                                </span>
+                              </td>
+                            </tr>
+                          );
+                        })
+                      ) : (
+                        <tr>
+                          <td colSpan={3} className="text-center py-4 text-muted small">No recent leads found.</td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
                 </div>

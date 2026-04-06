@@ -32,11 +32,18 @@ export default function Contact() {
     setIsSubmitting(true);
 
     try {
+      const payload = {
+        ...formData,
+        utm_source: localStorage.getItem("utm_source") || "Direct",
+        utm_medium: localStorage.getItem("utm_medium") || "",
+        utm_campaign: localStorage.getItem("utm_campaign") || "",
+      };
+
       const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
       const response = await fetch(`${API_URL}/api/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {

@@ -214,22 +214,11 @@ export default function Sidebar() {
                 href: "/admin/leads",
                 icon: "fa-users",
               },
-              // {
-              //   label: "Analytics",
-              //   href: "/admin/analytics",
-              //   icon: "fa-chart-line",
-              // },
               { label: "Services", href: "/admin/services", icon: "fa-tooth" },
               {
                 label: "Testimonials",
                 href: "/admin/testimonials",
                 icon: "fa-quote-left",
-              },
-              // { label: "Users", href: "/admin/users", icon: "fa-user" },
-              {
-                label: "Contact Messages",
-                href: "/admin/contact-messages",
-                icon: "fa-envelope",
               },
               { label: "Settings", href: "/admin/settings", icon: "fa-gear" },
             ].map((item, idx) => (

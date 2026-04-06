@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Download,
   X,
@@ -10,245 +10,48 @@ import {
   Plus,
   CheckCircle2,
   MailOpen,
+  Trash2,
+  ChevronDown
 } from "lucide-react";
-
-// Expanded Mock data for pagination testing
-const initialLeadsData = [
-  {
-    id: 1,
-    name: "John Doe",
-    email: "john@example.com",
-    phone: "(555) 123 4567",
-    service: "Teeth Whitening",
-    source: "Google Ads",
-    campaign: "Summer Glow",
-    status: "NEW",
-    date: "Oct 24, 10:15 AM",
-    notes: [
-      {
-        id: 1,
-        text: "Interested in full mouth whitening for a wedding next month. Prefers morning appointments.",
-        author: "Sarah",
-        date: "Oct 24, 10:15 AM",
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    email: "jane@dental.com",
-    phone: "(555) 987 6543",
-    service: "Implants",
-    source: "Facebook",
-    campaign: "Smile More",
-    status: "CONTACTED",
-    date: "Oct 24, 09:30 AM",
-    notes: [
-      {
-        id: 1,
-        text: "Requires a consultation for upper jaw implants.",
-        author: "System",
-        date: "Oct 24, 09:30 AM",
-      },
-    ],
-  },
-  {
-    id: 3,
-    name: "Robert Brown",
-    email: "rob.b@gmail.com",
-    phone: "(555) 456 7890",
-    service: "Cleaning",
-    source: "Referral",
-    campaign: "Loyalty",
-    status: "QUALIFIED",
-    date: "Oct 23, 02:45 PM",
-    notes: [
-      {
-        id: 1,
-        text: "Referred by his wife. Has not been to a dentist in 3 years.",
-        author: "System",
-        date: "Oct 23, 02:45 PM",
-      },
-    ],
-  },
-  {
-    id: 4,
-    name: "Emily Davis",
-    email: "emily.d@outlook.com",
-    phone: "(555) 222 3333",
-    service: "Invisalign",
-    source: "SEO",
-    campaign: "Organic",
-    status: "CLOSED",
-    date: "Oct 23, 11:20 AM",
-    notes: [
-      {
-        id: 1,
-        text: "Started Invisalign treatment today.",
-        author: "System",
-        date: "Oct 23, 11:20 AM",
-      },
-    ],
-  },
-  {
-    id: 5,
-    name: "Michael Wilson",
-    email: "m.wilson@web.com",
-    phone: "(555) 888 9999",
-    service: "Veneers",
-    source: "Bing Ads",
-    campaign: "Holiday Promo",
-    status: "LOST",
-    date: "Oct 22, 04:10 PM",
-    notes: [
-      {
-        id: 1,
-        text: "Decided to postpone treatment due to budget constraints.",
-        author: "System",
-        date: "Oct 22, 04:10 PM",
-      },
-    ],
-  },
-  {
-    id: 6,
-    name: "Sarah Jenkins",
-    email: "sarah.j@email.com",
-    phone: "(555) 345 6789",
-    service: "Cleaning",
-    source: "Google Ads",
-    campaign: "General",
-    status: "NEW",
-    date: "Oct 21, 01:20 PM",
-    notes: [
-      {
-        id: 1,
-        text: "Routine cleaning block.",
-        author: "Sarah",
-        date: "Oct 21, 01:20 PM",
-      },
-    ],
-  },
-  {
-    id: 7,
-    name: "David Clark",
-    email: "d.clark@outlook.com",
-    phone: "(555) 234 5678",
-    service: "Teeth Whitening",
-    source: "SEO",
-    campaign: "Organic",
-    status: "CONTACTED",
-    date: "Oct 20, 09:15 AM",
-    notes: [
-      {
-        id: 1,
-        text: "Left voicemail.",
-        author: "System",
-        date: "Oct 20, 09:15 AM",
-      },
-    ],
-  },
-  {
-    id: 8,
-    name: "Lisa Wong",
-    email: "lwong@company.com",
-    phone: "(555) 876 5432",
-    service: "Invisalign",
-    source: "Facebook",
-    campaign: "Smile More",
-    status: "QUALIFIED",
-    date: "Oct 19, 11:45 AM",
-    notes: [
-      {
-        id: 1,
-        text: "Approved for financing.",
-        author: "System",
-        date: "Oct 19, 11:45 AM",
-      },
-    ],
-  },
-  {
-    id: 9,
-    name: "Tom Harris",
-    email: "tharris@web.com",
-    phone: "(555) 567 8901",
-    service: "Implants",
-    source: "Referral",
-    campaign: "Loyalty",
-    status: "NEW",
-    date: "Oct 18, 03:30 PM",
-    notes: [
-      {
-        id: 1,
-        text: "Wants to consult about lower implants.",
-        author: "Sarah",
-        date: "Oct 18, 03:30 PM",
-      },
-    ],
-  },
-  {
-    id: 10,
-    name: "Amanda Lee",
-    email: "alee@domain.com",
-    phone: "(555) 432 1098",
-    service: "Veneers",
-    source: "Bing Ads",
-    campaign: "Holiday Promo",
-    status: "LOST",
-    date: "Oct 17, 10:00 AM",
-    notes: [
-      {
-        id: 1,
-        text: "No response.",
-        author: "System",
-        date: "Oct 17, 10:00 AM",
-      },
-    ],
-  },
-  {
-    id: 11,
-    name: "Chris Evans",
-    email: "cevans@mail.com",
-    phone: "(555) 321 0987",
-    service: "Cleaning",
-    source: "Google Ads",
-    campaign: "Summer Glow",
-    status: "CLOSED",
-    date: "Oct 16, 02:15 PM",
-    notes: [
-      {
-        id: 1,
-        text: "Completed cleaning.",
-        author: "System",
-        date: "Oct 16, 02:15 PM",
-      },
-    ],
-  },
-  {
-    id: 12,
-    name: "Jessica Alba",
-    email: "jalba@email.com",
-    phone: "(555) 210 9876",
-    service: "Teeth Whitening",
-    source: "SEO",
-    campaign: "Organic",
-    status: "CONTACTED",
-    date: "Oct 15, 11:30 AM",
-    notes: [
-      {
-        id: 1,
-        text: "Sent follow up email.",
-        author: "Sarah",
-        date: "Oct 15, 11:30 AM",
-      },
-    ],
-  },
-];
+import toast from "react-hot-toast";
 
 export default function LeadsPage() {
-  const [leads, setLeads] = useState(initialLeadsData);
-  const [selectedLeadId, setSelectedLeadId] = useState<number | null>(
-    initialLeadsData[0].id,
-  );
+  const [leads, setLeads] = useState<any[]>([]);
+  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchLeads = async () => {
+      try {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        const response = await fetch(`${API_URL}/api/contact`);
+        if (response.ok) {
+          const data = await response.json();
+          const formattedLeads = data.map((d: any) => ({
+            id: d.id,
+            name: d.name || "Unknown",
+            email: d.email || "N/A",
+            phone: d.phone || "N/A",
+            service: d.subject || "General",
+            source: d.utm_source || "Direct",
+            campaign: d.utm_campaign || "N/A",
+            status: d.status || "NEW",
+            date: d.date || "",
+            notes: d.notes && d.notes.length > 0 ? d.notes : (d.message ? [{ id: 1, text: d.message, author: "Lead form", date: d.date }] : [])
+          }));
+          setLeads(formattedLeads);
+          if (formattedLeads.length > 0 && !selectedLeadId) {
+            setSelectedLeadId(formattedLeads[0].id);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch leads", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchLeads();
+  }, [selectedLeadId]);
 
   // Filters
   const [filterSource, setFilterSource] = useState("All Sources");
@@ -304,34 +107,97 @@ export default function LeadsPage() {
   ];
 
   // Note Action
-  const handleAddNote = () => {
+  const handleAddNote = async () => {
     if (!newNoteText.trim() || !selectedLeadId) return;
-    setLeads((prev) =>
-      prev.map((lead) => {
-        if (lead.id === selectedLeadId) {
-          return {
-            ...lead,
-            notes: [
-              ...lead.notes,
-              {
-                id: Date.now(),
-                text: newNoteText,
-                author: "Admin",
-                date: new Date().toLocaleString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                }),
-              },
-            ],
-          };
-        }
-        return lead;
-      }),
-    );
-    setNewNoteText("");
-    setIsAddingNote(false);
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const response = await fetch(`${API_URL}/api/contact/${selectedLeadId}/notes`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: newNoteText, author: "Admin" }),
+      });
+      if (response.ok) {
+        const result = await response.json();
+        setLeads((prev) =>
+          prev.map((lead) => {
+            if (lead.id === selectedLeadId) {
+              return {
+                ...lead,
+                notes: [...lead.notes, result.note],
+              };
+            }
+            return lead;
+          }),
+        );
+        setNewNoteText("");
+        setIsAddingNote(false);
+        toast.success("Note added");
+      }
+    } catch (error) {
+      console.error("Failed to add note", error);
+      toast.error("Failed to add note");
+    }
+  };
+
+  const updateLeadStatus = async (id: string, newStatus: string) => {
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const response = await fetch(`${API_URL}/api/contact/${id}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (response.ok) {
+        setLeads((prev) =>
+          prev.map((l) => (l.id === id ? { ...l, status: newStatus.toUpperCase() } : l))
+        );
+        toast.success("Status updated");
+      }
+    } catch (error) {
+      console.error("Failed to update status", error);
+      toast.error("Failed to update status");
+    }
+  };
+
+  const deleteLead = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this lead?")) return;
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const response = await fetch(`${API_URL}/api/contact/${id}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        setLeads((prev) => prev.filter((l) => l.id !== id));
+        setSelectedLeadId(null);
+        toast.success("Lead deleted");
+      }
+    } catch (error) {
+      console.error("Failed to delete lead", error);
+      toast.error("Failed to delete lead");
+    }
+  };
+
+  const handleDeleteNote = async (leadId: string, noteId: string) => {
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const response = await fetch(`${API_URL}/api/contact/${leadId}/notes/${noteId}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        setLeads((prev) =>
+          prev.map((l) => {
+            if (l.id === leadId) {
+              return { ...l, notes: l.notes.filter((n: any) => n.id.toString() !== noteId.toString()) };
+            }
+            return l;
+          })
+        );
+        toast.success("Note deleted");
+      }
+    } catch (error) {
+      console.error("Failed to delete note", error);
+      toast.error("Failed to delete note");
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -577,7 +443,13 @@ export default function LeadsPage() {
                 </tr>
               </thead>
               <tbody>
-                {paginatedLeads.length > 0 ? (
+                {isLoading ? (
+                  <tr>
+                    <td colSpan={5} className="text-center py-5">
+                      <div className="spinner-border text-primary" role="status"></div>
+                    </td>
+                  </tr>
+                ) : paginatedLeads.length > 0 ? (
                   paginatedLeads.map((lead) => {
                     const isSelected = selectedLead?.id === lead.id;
                     return (
@@ -787,7 +659,22 @@ export default function LeadsPage() {
                     className="text-muted fw-bold"
                     style={{ fontSize: "11px", letterSpacing: "0.5px" }}
                   >
-                    LEAD ID: #{44920 + selectedLead.id}
+                    LEAD ID: #{selectedLead.id.substring(0, 6).toUpperCase()}
+                  </div>
+                  <div className="mt-2 d-flex flex-wrap gap-2 align-items-center">
+                    <span className="text-secondary small fw-bold">MARK AS:</span>
+                    <select
+                      className="form-select form-select-sm border shadow-sm fw-bold w-auto"
+                      style={{ fontSize: "11px", borderRadius: "8px" }}
+                      value={selectedLead.status}
+                      onChange={(e) => updateLeadStatus(selectedLead.id, e.target.value)}
+                    >
+                      <option value="NEW">NEW</option>
+                      <option value="CONTACTED">CONTACTED</option>
+                      <option value="QUALIFIED">QUALIFIED</option>
+                      <option value="CLOSED">CLOSED</option>
+                      <option value="LOST">LOST</option>
+                    </select>
                   </div>
                   <div className="d-flex gap-2 mt-2">
                     <div
@@ -795,14 +682,31 @@ export default function LeadsPage() {
                       style={{
                         width: "32px",
                         height: "32px",
+                        color: "#ef4444",
+                        cursor: "pointer",
+                        transition: "all 0.2s",
+                      }}
+                      title="Delete Lead"
+                      onClick={() => deleteLead(selectedLead.id)}
+                    >
+                      <Trash2 size={14} />
+                    </div>
+                    <a
+                      href={`tel:${selectedLead.phone}`}
+                      className="bg-light border rounded-circle d-flex justify-content-center align-items-center shadow-sm"
+                      style={{
+                        width: "32px",
+                        height: "32px",
                         color: "#001BFF",
                         cursor: "pointer",
                         transition: "all 0.2s",
                       }}
+                      title={`Call ${selectedLead.phone}`}
                     >
                       <Phone size={14} />
-                    </div>
-                    <div
+                    </a>
+                    <a
+                      href={`mailto:${selectedLead.email}`}
                       className="bg-light border rounded-circle d-flex justify-content-center align-items-center shadow-sm"
                       style={{
                         width: "32px",
@@ -811,10 +715,12 @@ export default function LeadsPage() {
                         cursor: "pointer",
                         transition: "all 0.2s",
                       }}
+                      title={`Email ${selectedLead.email}`}
                     >
                       <Mail size={14} />
-                    </div>
-                    <div
+                    </a>
+                    <a
+                      href={`sms:${selectedLead.phone}`}
                       className="bg-light border rounded-circle d-flex justify-content-center align-items-center shadow-sm"
                       style={{
                         width: "32px",
@@ -823,9 +729,10 @@ export default function LeadsPage() {
                         cursor: "pointer",
                         transition: "all 0.2s",
                       }}
+                      title={`Message ${selectedLead.phone}`}
                     >
                       <MessageSquare size={14} />
-                    </div>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -846,11 +753,20 @@ export default function LeadsPage() {
                   {selectedLead.notes.map((note: any) => (
                     <div
                       key={note.id}
-                      className="bg-light p-3 rounded-4 shadow-sm"
+                      className="bg-light p-3 rounded-4 shadow-sm position-relative"
                       style={{ border: "1px solid #f8f9fa" }}
                     >
+                      <Trash2 
+                        size={12} 
+                        className="position-absolute text-danger cursor-pointer" 
+                        style={{ top: "10px", right: "10px" }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteNote(selectedLead.id, note.id.toString());
+                        }}
+                      />
                       <p
-                        className="mb-2 text-dark font-medium"
+                        className="mb-2 text-dark font-medium pe-3"
                         style={{ fontSize: "13.5px", lineHeight: "1.6" }}
                       >
                         {note.text}
@@ -960,7 +876,7 @@ export default function LeadsPage() {
                         className="text-muted mb-1"
                         style={{ fontSize: "12.5px", lineHeight: "1.4" }}
                       >
-                        Automatically captured from initial entry.
+                        System captured lead via {selectedLead.source}.
                       </div>
                       <div
                         className="text-muted fw-bold"
@@ -971,88 +887,56 @@ export default function LeadsPage() {
                     </div>
                   </div>
 
-                  <div className="d-flex mb-4 position-relative">
-                    <div
-                      className="rounded-circle d-flex justify-content-center align-items-center text-white z-1 shadow-sm"
-                      style={{
-                        width: "24px",
-                        height: "24px",
-                        marginTop: "2px",
-                        backgroundColor: "#60a5fa",
-                      }}
-                    >
-                      <Mail size={12} strokeWidth={2.5} />
-                    </div>
-                    <div className="ms-3">
-                      <div
-                        className="fw-bold text-dark"
-                        style={{ fontSize: "13.5px" }}
-                      >
-                        Welcome Email Sent
+                  {(() => {
+                    const internalNotesCount = selectedLead.notes.filter((n: any) => n.author === "Admin").length;
+                    return internalNotesCount > 0 ? (
+                      <div className="d-flex position-relative">
+                        <div
+                          className="rounded-circle d-flex justify-content-center align-items-center bg-white border border-primary text-primary z-1 shadow-sm"
+                          style={{
+                            width: "24px",
+                            height: "24px",
+                            marginTop: "2px",
+                          }}
+                        >
+                          <MessageSquare
+                            size={12}
+                            strokeWidth={2.5}
+                            style={{ color: "#001BFF" }}
+                          />
+                        </div>
+                        <div className="ms-3">
+                          <div
+                            className="fw-bold text-dark"
+                            style={{ fontSize: "13.5px" }}
+                          >
+                            Notes Updated
+                          </div>
+                          <div
+                            className="text-muted mb-1"
+                            style={{ fontSize: "12.5px", lineHeight: "1.4" }}
+                          >
+                            Administration added {internalNotesCount} internal note(s).
+                          </div>
+                          <div
+                            className="text-muted fw-bold"
+                            style={{ fontSize: "10px", color: "#adb5bd" }}
+                          >
+                            Recent Activity
+                          </div>
+                        </div>
                       </div>
-                      <div
-                        className="text-muted mb-1"
-                        style={{ fontSize: "12.5px", lineHeight: "1.4" }}
-                      >
-                        System sent "Introduction to Series" sequence.
-                      </div>
-                      <div
-                        className="text-muted fw-bold"
-                        style={{
-                          fontSize: "10px",
-                          color: "#adb5bd",
-                          letterSpacing: "0.2px",
-                        }}
-                      >
-                        System Generated
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="d-flex position-relative">
-                    <div
-                      className="rounded-circle d-flex justify-content-center align-items-center bg-white border border-primary text-primary z-1 shadow-sm"
-                      style={{
-                        width: "24px",
-                        height: "24px",
-                        marginTop: "2px",
-                      }}
-                    >
-                      <MailOpen
-                        size={12}
-                        strokeWidth={2.5}
-                        style={{ color: "#001BFF" }}
-                      />
-                    </div>
-                    <div className="ms-3">
-                      <div
-                        className="fw-bold text-dark"
-                        style={{ fontSize: "13.5px" }}
-                      >
-                        Email Opened
-                      </div>
-                      <div
-                        className="text-muted mb-1"
-                        style={{ fontSize: "12.5px", lineHeight: "1.4" }}
-                      >
-                        Lead viewed the "Welcome Email".
-                      </div>
-                      <div
-                        className="text-muted fw-bold"
-                        style={{ fontSize: "10px", color: "#adb5bd" }}
-                      >
-                        Read Status Detected
-                      </div>
-                    </div>
-                  </div>
+                    ) : null;
+                  })()}
                 </div>
               </div>
             </div>
 
             {/* Bottom Sticky Actions */}
             <div className="p-3 border-top bg-white d-flex gap-2 w-100 mt-auto">
-              <button
-                className="btn btn-primary flex-grow-1 rounded-3 shadow-sm"
+              <a
+                href={`mailto:${selectedLead.email}?subject=Consultation Regarding ${selectedLead.service}&body=Hello ${selectedLead.name},`}
+                className="btn btn-primary flex-grow-1 rounded-3 shadow-sm d-flex justify-content-center align-items-center"
                 style={{
                   backgroundColor: "#001BFF",
                   border: "none",
@@ -1060,16 +944,12 @@ export default function LeadsPage() {
                   fontWeight: "700",
                   padding: "12px 0",
                   letterSpacing: "0.5px",
+                  textDecoration: "none",
+                  color: "#fff"
                 }}
               >
-                Schedule Call
-              </button>
-              <button
-                className="btn btn-outline-secondary rounded-3 px-4 fw-bold"
-                style={{ fontSize: "13.5px" }}
-              >
-                Edit
-              </button>
+                Reach Out to Lead
+              </a>
             </div>
           </div>
         )}
